@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="utf-8" />
+		<title></title>
+		<script src="js/jquery-2.1.4.min.js"></script>
+		<script src="js/jquery.cookie.js"></script>
+	    <link rel="stylesheet" type="text/css" href="css/a.css"/>
+
+	</head>
+	<body>
+		<header>
+			<a href="luntai.html">LOGO</a>
+		</header>
+		<nav> 
+			<div class="a1">
+  
+				<div><img src="img/dllogo.png" /></div>
+				<p class="p2">Login Into Your Account</p>
+				<input type="text" placeholder="username" class="impt" />
+
+				<p class="a3"></p>
+				<input type="password" placeholder="Password" class="pass" />
+				<p class="a4"></p>
+				<div><button class="sub">Sign in</button></div>
+				<div class="t1">
+					<input type="checkbox" id="cookee" />
+					<span>Remember Me</span> 
+				</div>
+			</div>
+		</nav>
+	 
+	</body>
+	<script>
+		///用户名正则，4到16位（字母，数字，下划线，减号）
+		var reg1 = /^[a-zA-Z0-9_-]{8,10}$/
+		var reg2 = /^[0-9A-Za-z]{8,10}$/
+		$(".impt").blur(function() {
+			 impt = $(".impt").val();
+			if(reg1.test(impt)) {
+				$(".a3").text("")
+			} else {
+				$(".a3").text("userdene").css("color", "red")
+			}
+		})
+		$(".pass").blur(function() {
+			 impta = $(".pass").val();
+			if(reg2.test(impta)) {
+				$(".a4").text("")
+			} else {
+				$(".a4").text("userdene").css("color", "red")
+			}
+		})
+		if($.cookie("username")) {
+			$(".impt").val($.cookie("username"));
+			$(".pass").val($.cookie("pass"));
+			$("#cookee").attr("checked", true)
+		}
+		var cookeename;
+		$("#cookee").change(function(){
+			cookeename = $(this).prop("checked")
+		})
+		$(".sub").click(function(){
+			$.ajax({
+				type: "post",
+				async:false,
+				url: "http://47.92.37.168/luntai/php/index.php?C=Login&M=login",
+				data: {
+					"username": $(".impt").val(),
+					"password": $(".pass").val(),
+				},
+				dataType:"json",
+				success: function(data) {
+					if(data.code=="200" && reg1.test(impt) && reg2.test(impta)){
+						if(cookeename){
+							$.cookie("username", $(".impt").val(), {
+								expires: 7
+							});
+							$.cookie("pass", $(".pass").val(), {
+								expires: 7
+							});
+							sessionStorage.getItem("username", $(".impt").val());
+							location.href = "luntai.html"
+						} else {
+							sessionStorage.getItem("username", $(".impt").val());
+							location.href = "luntai.html"
+						}
+						return false
+						
+					}else if(data.code=="303"){
+						 alert(data.message)
+					}else{
+						alert("输入不正确")
+					}
+				}
+				
+			});
+			//			if(cookeename) {
+			//				$.cookie("username", $(".impt").val(), {
+			//					expires: 7
+			//				});
+			//				$.cookie("pass", $(".pass").val(), {
+			//					expires: 7
+			//				});
+			//				sessionStorage.setItem("username", $(".impt").val());
+			//				location.href = "Match.html"
+			//			} else {
+			//				sessionStorage.setItem("username", $(".impt").val());
+			//				location.href = "Match.html"
+			//			}
+						return false
+		})
+	
+	</script>
+
+</html>
